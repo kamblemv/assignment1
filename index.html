@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Generate HTML From JSON</title>
+</head>
+
+<body>
+    <textarea id="inputJSON" placeholder="Input JSON"></textarea>
+    <button id="generateButton">Generate</button>
+    <textarea id="outputHTML" placeholder="Output HTML"></textarea>
+
+    <script>
+        const inputJSON = document.getElementById("inputJSON");
+        const generateButton = document.getElementById("generateButton");
+        const outputHTML = document.getElementById("outputHTML");
+
+        generateButton.addEventListener("click", generateHTML);
+
+        function generateHTML() {
+            const jsonText = inputJSON.value.trim();
+            if (!jsonText) {
+                alert("Error: Input JSON is empty.");
+                return;
+            }
+
+            let jsonData;
+            try {
+                jsonData = JSON.parse(jsonText);
+            } catch (error) {
+                alert("Error: Invalid JSON format.");
+                return;
+            }
+
+            const idSet = new Set();
+            const htmlStrings = [];
+
+            for (const item of jsonData) {
+                const id = item.id;
+                if (idSet.has(id)) {
+                    alert("Error: ID duplicated");
+                    return;
+                }
+                idSet.add(id);
+
+                const rootDiv = document.createElement("div");
+                rootDiv.className = "root";
+                rootDiv.setAttribute("data-id", id);
+
+                const usernameSpan = document.createElement("span");
+                usernameSpan.className = "username";
+                usernameSpan.textContent = item.username;
+
+                const videoNameSpan = document.createElement("span");
+                videoNameSpan.className = "video_name";
+                videoNameSpan.textContent = item.video_name;
+
+                const additionalDetailsDiv = document.createElement("div");
+                additionalDetailsDiv.className = "additional_details";
+
+                const typeSpan = document.createElement("span");
+                typeSpan.className = "type";
+                typeSpan.textContent = item.action;
+
+                additionalDetailsDiv.appendChild(typeSpan);
+                rootDiv.appendChild(usernameSpan);
+                rootDiv.appendChild(videoNameSpan);
+                rootDiv.appendChild(additionalDetailsDiv);
+
+                htmlStrings.push(rootDiv.outerHTML);
+            }
+
+            const outputString = htmlStrings.join("\n");
+            outputHTML.value = outputString;
+        }
+    </script>
+</body>
+
+</html>
